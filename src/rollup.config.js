@@ -4,7 +4,8 @@ import livereload from 'rollup-plugin-livereload';
 import postcss from 'rollup-plugin-postcss';
 import serve from 'rollup-plugin-serve';
 import { terser } from 'rollup-plugin-terser';
-// import babel from '@rollup/plugin-babel';
+import resolve from '@rollup/plugin-node-resolve';
+import babel from '@rollup/plugin-babel';
 
 // Builds based on environment
 const OUTPUT =
@@ -24,6 +25,8 @@ export default {
     sourcemap: SOURCEMAP,
   },
   plugins: [
+    resolve(),
+    babel({ babelHelpers: 'bundled' }),
     del({ targets: OUTPUT }),
     MINIFY,
     postcss({
