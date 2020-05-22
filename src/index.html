@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Map Thingy</title>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.15/esri/themes/light/main.css"
+    />
+    <link rel="stylesheet" href="styles/style.css" />
+    <script>
+      // var locationPath = location.pathname.replace(/\/[^\/]+$/, '');
+      // window.dojoConfig = {
+      //   packages: [
+      //     {
+      //       name: 'app',
+      //       location: locationPath + 'index',
+      //     },
+      //   ],
+      // };
+    </script>
+    <script defer src="https://js.arcgis.com/4.15/"></script>
+    <script defer src="index.js"></script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+  </body>
 </html>
