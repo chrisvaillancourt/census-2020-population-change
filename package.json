@@ -10,8 +10,8 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "build": "rollup -c --environment BUILD:production",
-    "dev": "rollup -cw  --environment BUILD:development"
+    "build": "rollup --config src/rollup.config.js --environment BUILD:production",
+    "dev": "rollup --config src/rollup.config.js --watch  --environment BUILD:development"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
