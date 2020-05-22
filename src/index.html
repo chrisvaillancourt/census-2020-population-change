@@ -10,20 +10,21 @@
     />
     <link rel="stylesheet" href="styles/style.css" />
     <script>
-      // var locationPath = location.pathname.replace(/\/[^\/]+$/, '');
-      // window.dojoConfig = {
-      //   packages: [
-      //     {
-      //       name: 'app',
-      //       location: locationPath + 'index',
-      //     },
-      //   ],
-      // };
+      var locationPath = location.pathname.replace(/\/[^\/]+$/, '');
+      window.dojoConfig = {
+        packages: [
+          {
+            name: 'app',
+            location: locationPath,
+          },
+        ],
+        deps: ['app/bundle'],
+      };
     </script>
     <script defer src="https://js.arcgis.com/4.15/"></script>
-    <script defer src="index.js"></script>
   </head>
   <body>
+    <noscript> JavaScript is required in order to use this app </noscript>
     <div id="viewDiv"></div>
   </body>
 </html>

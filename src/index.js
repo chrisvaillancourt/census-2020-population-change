@@ -1,4 +1,3 @@
-'use strict';
 var l = console.log.bind(console);
 l('loading...');
 
