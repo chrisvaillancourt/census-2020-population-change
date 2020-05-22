@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import copy from 'rollup-plugin-copy';
 import del from 'rollup-plugin-delete';
 import livereload from 'rollup-plugin-livereload';
