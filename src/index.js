@@ -1,3 +1,4 @@
+import './styles/normalize.css';
 import './styles/style.css';
 import esriMap from 'esri/Map';
 import MapView from 'esri/views/MapView';
@@ -16,3 +17,4 @@ var view = new MapView({
 });
 
 console.timeEnd('map');
+console.log(view);
