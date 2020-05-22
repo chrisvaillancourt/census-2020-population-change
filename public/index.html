@@ -8,7 +8,7 @@
       rel="stylesheet"
       href="https://js.arcgis.com/4.15/esri/themes/light/main.css"
     />
-    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="index.css" />
     <script>
       var locationPath = location.pathname.replace(/\/[^\/]+$/, '');
       window.dojoConfig = {
@@ -18,7 +18,7 @@
             location: locationPath,
           },
         ],
-        deps: ['app/bundle'],
+        deps: ['app/index'],
       };
     </script>
     <script defer src="https://js.arcgis.com/4.15/"></script>

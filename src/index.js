@@ -1,3 +1,4 @@
+import './styles/style.css';
 var l = console.log.bind(console);
 l('loading...');
 
