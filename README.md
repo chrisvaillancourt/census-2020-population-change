@@ -8,6 +8,8 @@ See it live [here](https://chrisvaillancourt.github.io/arcgis-js-rollup/).
 
 To build for local development:
 
+_Note_: There seems to be an [issue](https://github.com/thgh/rollup-plugin-livereload/issues/46) with the livereload rollup plugin that prevents the browser from reloading automatically.
+
 ```sh
 npm run start
 ```
