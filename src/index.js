@@ -2,19 +2,30 @@ import './styles/normalize.css';
 import './styles/style.css';
 import esriMap from 'esri/Map';
 import MapView from 'esri/views/MapView';
+import { basemap } from './data/basemap';
+import { homeBtn } from './data/widgets';
 
-var l = console.log.bind(console);
 console.time('map');
-var map = new esriMap({
-  basemap: 'topo-vector',
-});
+var l = console.log.bind(console);
 
-var view = new MapView({
-  container: 'viewDiv',
-  map: map,
-  center: [-118.805, 34.027], // longitude, latitude
-  zoom: 13,
-});
+function createMap() {
+  var map = new esriMap({
+    basemap,
+  });
+
+  var view = new MapView({
+    container: 'viewDiv',
+    map: map,
+    center: [-99.74405, 38.1374], // longitude, latitude
+    zoom: 3,
+  });
+  homeBtn.view = view;
+  view.ui.move('zoom', 'bottom-right');
+  view.when(async function workWithView() {
+    view.ui.add(homeBtn, 'bottom-right');
+  });
+}
+
+createMap();
 
 console.timeEnd('map');
-console.log(view);
