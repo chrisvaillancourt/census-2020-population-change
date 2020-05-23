@@ -1,5 +1,7 @@
-import Home from 'esri/widgets/Home';
+// add widgets here
 
-const homeBtn = new Home({});
+// import Home from 'esri/widgets/Home';
 
-export { homeBtn };
+// const homeBtn = new Home({});
+
+// export { homeBtn };

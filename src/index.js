@@ -3,12 +3,12 @@ import './styles/style.css';
 import esriMap from 'esri/Map';
 import MapView from 'esri/views/MapView';
 import { basemap } from './data/basemap';
-import { homeBtn } from './data/widgets';
+import Home from 'esri/widgets/Home';
 
-console.time('map');
 var l = console.log.bind(console);
 
 function createMap() {
+  console.time('map');
   var map = new esriMap({
     basemap,
   });
@@ -19,13 +19,15 @@ function createMap() {
     center: [-99.74405, 38.1374], // longitude, latitude
     zoom: 3,
   });
-  homeBtn.view = view;
+  var homeBtn = new Home({
+    view,
+  });
+
   view.ui.move('zoom', 'bottom-right');
   view.when(async function workWithView() {
-    view.ui.add(homeBtn, 'bottom-right');
+    view.ui.add([homeBtn], 'bottom-right');
+    console.timeEnd('map');
   });
 }
 
 createMap();
-
-console.timeEnd('map');
