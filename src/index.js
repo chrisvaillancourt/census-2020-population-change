@@ -36,6 +36,7 @@ async function createMap() {
 
     var layerExtent = await countyLayerView.queryExtent();
     view.goTo(layerExtent);
+
     var results = await countyLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
 
@@ -44,5 +45,7 @@ async function createMap() {
 }
 
 createMap()
-  .then(() => console.timeEnd('map'))
+  .then(() => {
+    // do stuff
+  })
   .catch(console.error);
