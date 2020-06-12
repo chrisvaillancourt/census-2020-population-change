@@ -24,10 +24,13 @@ function createMap() {
   });
 
   view.ui.move('zoom', 'bottom-right');
-  view.when(async function workWithView() {
-    view.ui.add([homeBtn], 'bottom-right');
-    console.timeEnd('map');
-  });
+  view.when(
+    async function workWithView() {
+      view.ui.add([homeBtn], 'bottom-right');
+    }
+      .then(() => console.timeEnd('map'))
+      .catch(console.error)
+  );
 }
 
 createMap();
