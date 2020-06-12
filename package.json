@@ -34,5 +34,7 @@
     "rollup-plugin-styles": "^3.8.2",
     "rollup-plugin-terser": "^6.1.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "d3-fetch": "^1.2.0"
+  }
 }
