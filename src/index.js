@@ -6,11 +6,11 @@ import Extent from 'esri/geometry/Extent';
 import Legend from 'esri/widgets/Legend';
 import Home from 'esri/widgets/Home';
 import Expand from 'esri/widgets/Expand';
+import watchUtils from 'esri/core/watchUtils';
 import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid } from './js/featureLayers';
 import { blueAndGray3 } from './js/renderers';
 
-console.time('map');
 async function createMap() {
   var countyLayer = await countyGeoJsonCentroid;
   countyLayer.renderer = blueAndGray3;
@@ -54,28 +54,19 @@ async function createMap() {
   view.ui.add([legendExpand], 'top-right');
 
   var countyLayerView = await view.whenLayerView(countyLayer);
-  // var shouldZoom = true;
 
-  countyLayerView.watch('updating', async (isUpdating) => {
-    if (isUpdating) return;
-
-    // if (shouldZoom) {
-    // only zoom to feature extent on initial load
-    // var layerExtent = await countyLayerView.queryExtent();
-
-    // view.goTo(layerExtent);
-    // shouldZoom = false;
-    // }
-
+  function endTimer() {
     console.timeEnd('map');
-
+  }
+  async function queryLayerView() {
     var results = await countyLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
-
-    // console.log(attributes);
-  });
+    console.log(attributes);
+  }
+  watchUtils.whenFalseOnce(countyLayerView, 'updating', endTimer);
+  watchUtils.whenFalse(countyLayerView, 'updating', queryLayerView);
 }
-
+console.time('map');
 createMap()
   .then(() => {
     // do stuff
