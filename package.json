@@ -35,6 +35,11 @@
     "rollup-plugin-terser": "^6.1.0"
   },
   "dependencies": {
-    "d3-fetch": "^1.2.0"
+    "d3-array": "^2.4.0",
+    "d3-axis": "^1.0.12",
+    "d3-fetch": "^1.2.0",
+    "d3-format": "^1.4.4",
+    "d3-scale": "^3.2.1",
+    "d3-selection": "^1.4.1"
   }
 }
