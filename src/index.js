@@ -3,8 +3,9 @@ import './styles/style.css';
 import esriMap from 'esri/Map';
 import MapView from 'esri/views/MapView';
 import Extent from 'esri/geometry/Extent';
-import { basemap } from './js/basemap';
+import Legend from 'esri/widgets/Legend';
 import Home from 'esri/widgets/Home';
+import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid } from './js/featureLayers';
 import { colorAndSize } from './js/renderers';
 
@@ -33,12 +34,16 @@ async function createMap() {
   var homeBtn = new Home({
     view,
   });
+  var legend = new Legend({
+    view,
+  });
 
   view.ui.move('zoom', 'bottom-right');
 
   await view.when();
 
   view.ui.add([homeBtn], 'bottom-right');
+  view.ui.add([legend], 'top-right');
 
   var countyLayerView = await view.whenLayerView(countyLayer);
   var shouldZoom = true;
