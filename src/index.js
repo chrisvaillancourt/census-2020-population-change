@@ -14,6 +14,7 @@ console.time('map');
 async function createMap() {
   var countyLayer = await countyGeoJsonCentroid;
   countyLayer.renderer = blueAndGray3;
+  countyLayer.title = 'US County';
   var map = new esriMap({
     basemap,
     layers: [countyLayer],
