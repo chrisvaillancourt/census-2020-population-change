@@ -7,12 +7,12 @@ import Legend from 'esri/widgets/Legend';
 import Home from 'esri/widgets/Home';
 import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid } from './js/featureLayers';
-import { colorAndSizePurpleAndGreen } from './js/renderers';
+import { blueAndGray3 } from './js/renderers';
 
 console.time('map');
 async function createMap() {
   var countyLayer = await countyGeoJsonCentroid;
-  countyLayer.renderer = colorAndSizePurpleAndGreen;
+  countyLayer.renderer = blueAndGray3;
   var map = new esriMap({
     basemap,
     layers: [countyLayer],
