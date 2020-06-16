@@ -1,4 +1,4 @@
-var colorAndSize = {
+var colorAndSizePurpleAndGreen = {
   type: 'simple',
   symbol: {
     type: 'simple-marker',
@@ -54,4 +54,4 @@ var colorAndSize = {
   ],
 };
 
-export { colorAndSize };
+export { colorAndSizePurpleAndGreen };
