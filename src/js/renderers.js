@@ -129,7 +129,6 @@ var blueAndGray3 = {
       width: '0.5px',
     },
   },
-  label: 'Population 2020 County Centroid',
   visualVariables: [
     {
       type: 'color',
@@ -140,19 +139,19 @@ var blueAndGray3 = {
       stops: [
         {
           value: -0.5,
-          color: '#cccccc',
+          color: 'hsla(0, 0%, 80%, 0.8)',
           label: '-1.23%',
         },
 
         {
           value: 0.76,
-          color: '#424038',
+          color: 'hsla(48, 8%, 24%, 0.8)',
           label: '0.76% (US Average)',
         },
 
         {
           value: 2.02,
-          color: '#00b3ff',
+          color: 'hsla(198, 100%, 50%, 0.8)',
           label: '2.02%',
         },
       ],
@@ -161,7 +160,7 @@ var blueAndGray3 = {
       type: 'size',
       field: 'pop_change',
       legendOptions: {
-        title: 'Population Change',
+        title: '2010 - 2020 Population Change',
       },
       minDataValue: 0,
       maxDataValue: 500000,
