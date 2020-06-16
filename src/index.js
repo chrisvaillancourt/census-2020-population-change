@@ -15,6 +15,7 @@ async function createMap() {
   var countyLayer = await countyGeoJsonCentroid;
   countyLayer.renderer = blueAndGray3;
   countyLayer.title = 'US County';
+
   var map = new esriMap({
     basemap,
     layers: [countyLayer],
@@ -49,11 +50,12 @@ async function createMap() {
   view.ui.move('zoom', 'bottom-right');
 
   await view.when();
-
   view.ui.add([homeBtn], 'bottom-right');
   view.ui.add([legendExpand], 'top-right');
 
   var countyLayerView = await view.whenLayerView(countyLayer);
+  watchUtils.whenFalseOnce(countyLayerView, 'updating', endTimer);
+  watchUtils.whenFalse(countyLayerView, 'updating', queryLayerView);
 
   function endTimer() {
     console.timeEnd('map');
@@ -63,8 +65,6 @@ async function createMap() {
     var attributes = results.features.map((feature) => feature.attributes);
     console.log(attributes);
   }
-  watchUtils.whenFalseOnce(countyLayerView, 'updating', endTimer);
-  watchUtils.whenFalse(countyLayerView, 'updating', queryLayerView);
 }
 console.time('map');
 createMap()
