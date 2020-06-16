@@ -125,7 +125,7 @@ var blueAndGray3 = {
   symbol: {
     type: 'simple-marker',
     outline: {
-      color: [255, 255, 255, 0.25],
+      color: [66, 64, 56, 0.25],
       width: '0.5px',
     },
   },
@@ -139,7 +139,7 @@ var blueAndGray3 = {
       },
       stops: [
         {
-          value: -1.23,
+          value: -0.5,
           color: '#cccccc',
           label: '-1.23%',
         },
@@ -151,19 +151,22 @@ var blueAndGray3 = {
         },
 
         {
-          value: 2.26,
+          value: 2.02,
           color: '#00b3ff',
-          label: '2.26%',
+          label: '2.02%',
         },
       ],
     },
     {
       type: 'size',
       field: 'pop_change',
+      legendOptions: {
+        title: 'Population Change',
+      },
       minDataValue: 0,
-      maxDataValue: 200000,
-      minSize: 6,
-      maxSize: 60,
+      maxDataValue: 500000,
+      minSize: 4,
+      maxSize: 50,
     },
   ],
 };
