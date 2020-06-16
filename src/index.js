@@ -7,18 +7,23 @@ import Legend from 'esri/widgets/Legend';
 import Home from 'esri/widgets/Home';
 import Expand from 'esri/widgets/Expand';
 import watchUtils from 'esri/core/watchUtils';
+import LayerList from 'esri/widgets/LayerList';
 import { basemap } from './js/basemap';
-import { countyGeoJsonCentroid } from './js/featureLayers';
-import { blueAndGray3 } from './js/renderers';
+import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
+import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
 
 async function createMap() {
-  var countyLayer = await countyGeoJsonCentroid;
-  countyLayer.renderer = blueAndGray3;
-  countyLayer.title = 'US County';
+  var countyPolygonLayer = await countyGeoJson;
+  var countyCentroidLayer = await countyGeoJsonCentroid;
+  countyCentroidLayer.renderer = colorAndSizeBlueAndGray3;
+  countyCentroidLayer.title = 'US County';
+  countyPolygonLayer.renderer = colorBlueAndGray3;
+  countyPolygonLayer.title = 'US County (Polygon)';
+  countyPolygonLayer.visible = false;
 
   var map = new esriMap({
     basemap,
-    layers: [countyLayer],
+    layers: [countyCentroidLayer, countyPolygonLayer],
   });
 
   var view = new MapView({
@@ -34,6 +39,7 @@ async function createMap() {
       },
     }),
   });
+
   var homeBtn = new Home({
     view,
   });
@@ -46,14 +52,17 @@ async function createMap() {
     view,
     content: legend.domNode,
   });
+  var layerList = new LayerList({
+    view,
+  });
 
   view.ui.move('zoom', 'bottom-right');
 
   await view.when();
   view.ui.add([homeBtn], 'bottom-right');
-  view.ui.add([legendExpand], 'top-right');
+  view.ui.add([legendExpand, layerList], 'top-right');
 
-  var countyLayerView = await view.whenLayerView(countyLayer);
+  var countyLayerView = await view.whenLayerView(countyCentroidLayer);
   watchUtils.whenFalseOnce(countyLayerView, 'updating', endTimer);
   watchUtils.whenFalse(countyLayerView, 'updating', queryLayerView);
 

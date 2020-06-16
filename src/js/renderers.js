@@ -120,7 +120,7 @@ var colorAndSizePurpleAndGray1 = {
   ],
 };
 
-var blueAndGray3 = {
+var colorAndSizeBlueAndGray3 = {
   type: 'simple',
   symbol: {
     type: 'simple-marker',
@@ -169,5 +169,48 @@ var blueAndGray3 = {
     },
   ],
 };
+var colorBlueAndGray3 = {
+  type: 'simple',
+  symbol: {
+    type: 'simple-fill',
+    outline: {
+      color: [66, 64, 56, 0.25],
+      width: '0.5px',
+    },
+  },
+  visualVariables: [
+    {
+      type: 'color',
+      field: 'pop_growth',
+      legendOptions: {
+        title: '2010 - 2020 Annual Compound Growth Rate',
+      },
+      stops: [
+        {
+          value: -0.5,
+          color: 'hsla(0, 0%, 80%, 0.8)',
+          label: '-1.23%',
+        },
 
-export { colorAndSizePurpleAndGreen, colorAndSizePurpleAndGray1, blueAndGray3 };
+        {
+          value: 0.76,
+          color: 'hsla(48, 8%, 24%, 0.8)',
+          label: '0.76% (US Average)',
+        },
+
+        {
+          value: 2.02,
+          color: 'hsla(198, 100%, 50%, 0.8)',
+          label: '2.02%',
+        },
+      ],
+    },
+  ],
+};
+
+export {
+  colorAndSizePurpleAndGreen,
+  colorAndSizePurpleAndGray1,
+  colorAndSizeBlueAndGray3,
+  colorBlueAndGray3,
+};
