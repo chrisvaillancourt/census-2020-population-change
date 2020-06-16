@@ -36,16 +36,20 @@ var colorAndSize = {
     {
       type: 'size',
       field: 'pop_change',
-      stops: [
-        {
-          value: 0,
-          size: 6,
-        },
-        {
-          value: 200000,
-          size: 70,
-        },
-      ],
+      minDataValue: 0,
+      maxDataValue: 200000,
+      minSize: 6,
+      maxSize: 60,
+      // stops: [
+      //   {
+      //     value: 0,
+      //     size: 6,
+      //   },
+      //   {
+      //     value: 200000,
+      //     size: 70,
+      //   },
+      // ],
     },
   ],
 };
