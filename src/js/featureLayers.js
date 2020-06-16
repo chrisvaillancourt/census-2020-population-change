@@ -19,14 +19,16 @@ async function createEsriGeoJson(geoJson) {
   });
   return geoJsonLayer;
 }
-async function createCountyGeoJsonLyr() {
-  var countyGeoJson = await json(
-    './geo-data/county-json/county_simplified_contig_albers.json'
-  );
+async function createCountyGeoJsonLyr(jsonFilePath) {
+  var countyGeoJson = await json(jsonFilePath);
   var countyEsriGeoJson = await createEsriGeoJson(countyGeoJson);
   return countyEsriGeoJson;
 }
 
-var countyGeoJson = createCountyGeoJsonLyr();
-
-export { countyLayer, countyGeoJson };
+var countyGeoJson = createCountyGeoJsonLyr(
+  './geo-data/county-json/county_simplified.json'
+);
+var countyGeoJsonCentroid = createCountyGeoJsonLyr(
+  './geo-data/county-json/county_simplified_centroid.json'
+);
+export { countyLayer, countyGeoJson, countyGeoJsonCentroid };
