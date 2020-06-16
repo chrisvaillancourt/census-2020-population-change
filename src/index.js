@@ -2,14 +2,16 @@ import './styles/normalize.css';
 import './styles/style.css';
 import esriMap from 'esri/Map';
 import MapView from 'esri/views/MapView';
+import Extent from 'esri/geometry/Extent';
 import { basemap } from './js/basemap';
 import Home from 'esri/widgets/Home';
-import { countyGeoJson } from './js/featureLayers';
+import { countyGeoJsonCentroid } from './js/featureLayers';
+import { colorAndSize } from './js/renderers';
 
 console.time('map');
 async function createMap() {
-  var countyLayer = await countyGeoJson;
-
+  var countyLayer = await countyGeoJsonCentroid;
+  countyLayer.renderer = colorAndSize;
   var map = new esriMap({
     basemap,
     layers: [countyLayer],
@@ -18,6 +20,15 @@ async function createMap() {
   var view = new MapView({
     container: 'viewDiv',
     map: map,
+    extent: new Extent({
+      xmax: 2624278.0972463945,
+      xmin: -3309231.185521407,
+      ymax: 1784583.7986036085,
+      ymin: -1879502.601325326,
+      spatialReference: {
+        wkid: 102003,
+      },
+    }),
   });
   var homeBtn = new Home({
     view,
@@ -30,17 +41,25 @@ async function createMap() {
   view.ui.add([homeBtn], 'bottom-right');
 
   var countyLayerView = await view.whenLayerView(countyLayer);
+  var shouldZoom = true;
 
   countyLayerView.watch('updating', async (isUpdating) => {
     if (isUpdating) return;
 
-    var layerExtent = await countyLayerView.queryExtent();
-    view.goTo(layerExtent);
+    if (shouldZoom) {
+      // only zoom to feature extent on initial load
+      var layerExtent = await countyLayerView.queryExtent();
+
+      // view.goTo(layerExtent);
+      // shouldZoom = false;
+    }
+
+    console.timeEnd('map');
 
     var results = await countyLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
 
-    console.log(attributes);
+    // console.log(attributes);
   });
 }
 
