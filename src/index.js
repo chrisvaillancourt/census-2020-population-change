@@ -59,6 +59,11 @@ async function createMap() {
   view.ui.move('zoom', 'bottom-right');
 
   await view.when();
+
+  var chartDiv = createDiv({
+    classname: 'chart',
+  });
+  view.ui.add(chartDiv, 'bottom-left');
   view.ui.add([homeBtn], 'bottom-right');
   view.ui.add([legendExpand, layerList], 'top-right');
 
@@ -73,6 +78,11 @@ async function createMap() {
     var results = await countyLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
     console.log(attributes);
+  }
+  function createDiv({ classname = '' }) {
+    var div = document.createElement('div');
+    div.classList.add(classname);
+    return div;
   }
 }
 console.time('map');
