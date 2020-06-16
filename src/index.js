@@ -5,6 +5,7 @@ import MapView from 'esri/views/MapView';
 import Extent from 'esri/geometry/Extent';
 import Legend from 'esri/widgets/Legend';
 import Home from 'esri/widgets/Home';
+import Expand from 'esri/widgets/Expand';
 import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid } from './js/featureLayers';
 import { blueAndGray3 } from './js/renderers';
@@ -36,6 +37,12 @@ async function createMap() {
   });
   var legend = new Legend({
     view,
+    container: document.createElement('div'),
+  });
+  var legendExpand = new Expand({
+    expandIconClass: 'esri-icon-key',
+    view,
+    content: legend.domNode,
   });
 
   view.ui.move('zoom', 'bottom-right');
@@ -43,21 +50,21 @@ async function createMap() {
   await view.when();
 
   view.ui.add([homeBtn], 'bottom-right');
-  view.ui.add([legend], 'top-right');
+  view.ui.add([legendExpand], 'top-right');
 
   var countyLayerView = await view.whenLayerView(countyLayer);
-  var shouldZoom = true;
+  // var shouldZoom = true;
 
   countyLayerView.watch('updating', async (isUpdating) => {
     if (isUpdating) return;
 
-    if (shouldZoom) {
-      // only zoom to feature extent on initial load
-      var layerExtent = await countyLayerView.queryExtent();
+    // if (shouldZoom) {
+    // only zoom to feature extent on initial load
+    // var layerExtent = await countyLayerView.queryExtent();
 
-      // view.goTo(layerExtent);
-      // shouldZoom = false;
-    }
+    // view.goTo(layerExtent);
+    // shouldZoom = false;
+    // }
 
     console.timeEnd('map');
 
