@@ -13,17 +13,10 @@ import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
 import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
 
 async function createMap() {
-  var countyPolygonLayer = await countyGeoJson;
-  var countyCentroidLayer = await countyGeoJsonCentroid;
-  countyCentroidLayer.renderer = colorAndSizeBlueAndGray3;
-  countyCentroidLayer.title = 'US County';
-  countyPolygonLayer.renderer = colorBlueAndGray3;
-  countyPolygonLayer.title = 'US County (Polygon)';
-  countyPolygonLayer.visible = false;
-
   var map = new esriMap({
     basemap,
-    layers: [countyCentroidLayer, countyPolygonLayer],
+    // Don't add layers here yet because they haven't resolved
+    // and we don't want to pause the execution with 'await' just yet.
   });
 
   var view = new MapView({
@@ -58,7 +51,19 @@ async function createMap() {
 
   view.ui.move('zoom', 'bottom-right');
 
-  await view.when();
+  var [
+    viewReady,
+    countyPolygonLayer,
+    countyCentroidLayer,
+    ,
+  ] = await Promise.all([view.when(), countyGeoJson, countyGeoJsonCentroid]);
+
+  countyCentroidLayer.renderer = colorAndSizeBlueAndGray3;
+  countyCentroidLayer.title = 'US County';
+  countyPolygonLayer.renderer = colorBlueAndGray3;
+  countyPolygonLayer.title = 'US County (Polygon)';
+  countyPolygonLayer.visible = false;
+  map.addMany([countyCentroidLayer, countyPolygonLayer]);
 
   var chartDiv = createDiv({
     classname: 'chart',
@@ -67,15 +72,15 @@ async function createMap() {
   view.ui.add([homeBtn], 'bottom-right');
   view.ui.add([legendExpand, layerList], 'top-right');
 
-  var countyLayerView = await view.whenLayerView(countyCentroidLayer);
-  watchUtils.whenFalseOnce(countyLayerView, 'updating', endTimer);
-  watchUtils.whenFalse(countyLayerView, 'updating', queryLayerView);
+  var countyCentroidLayerView = await view.whenLayerView(countyCentroidLayer);
+  watchUtils.whenFalseOnce(countyCentroidLayerView, 'updating', endTimer);
+  watchUtils.whenFalse(countyCentroidLayerView, 'updating', queryLayerView);
 
   function endTimer() {
     console.timeEnd('map');
   }
   async function queryLayerView() {
-    var results = await countyLayerView.queryFeatures();
+    var results = await countyCentroidLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
     console.log(attributes);
   }
