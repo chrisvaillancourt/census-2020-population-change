@@ -11,7 +11,7 @@ import LayerList from 'esri/widgets/LayerList';
 import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
 import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
-
+import { drawBarChart } from './js/chart/drawChart';
 async function createMap() {
   var map = new esriMap({
     basemap,
@@ -51,12 +51,11 @@ async function createMap() {
 
   view.ui.move('zoom', 'bottom-right');
 
-  var [
-    viewReady,
-    countyPolygonLayer,
-    countyCentroidLayer,
-    ,
-  ] = await Promise.all([view.when(), countyGeoJson, countyGeoJsonCentroid]);
+  var [viewReady, countyPolygonLayer, countyCentroidLayer] = await Promise.all([
+    view.when(),
+    countyGeoJson,
+    countyGeoJsonCentroid,
+  ]);
 
   countyCentroidLayer.renderer = colorAndSizeBlueAndGray3;
   countyCentroidLayer.title = 'US County';
@@ -82,11 +81,14 @@ async function createMap() {
   async function queryLayerView() {
     var results = await countyCentroidLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
-    console.log(attributes);
+    drawBarChart(attributes);
   }
   function createDiv({ classname = '' }) {
     var div = document.createElement('div');
     div.classList.add(classname);
+    var wrapper = document.createElement('div');
+    wrapper.classList.add('chart-wrapper');
+    div.append(wrapper);
     return div;
   }
 }
