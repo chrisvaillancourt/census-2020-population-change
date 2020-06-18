@@ -151,7 +151,7 @@ function drawBarChart(data) {
   // step 6) draw peripherals
 
   function renderBottomAxis({ scale, transition, chartBounds }) {
-    var xAxisGenerator = axisBottom().scale(scale);
+    var xAxisGenerator = axisBottom().scale(scale).tickFormat(format('~s'));
     var xAxis = chartBounds
       .select('.x-axis')
       .transition(transition)
