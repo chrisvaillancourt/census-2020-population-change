@@ -3,6 +3,7 @@ import { scaleLinear, scaleBand } from 'd3-scale';
 import { extent, max, histogram, mean } from 'd3-array';
 import { axisBottom } from 'd3-axis';
 import { format } from 'd3-format';
+import { transition } from 'd3-transition';
 
 function setUpChartElements() {
   var wrapper = select('#chart-wrapper');
@@ -15,6 +16,7 @@ function setUpChartElements() {
     .attr('height', dimensions.height);
   var bounds = svg
     .append('g')
+    .attr('id', 'bounds')
     .style(
       'transform',
       `translate(${dimensions.margin.left}px, ${dimensions.margin.right}px)`
@@ -65,7 +67,7 @@ function drawBarChart(data) {
   var dimensions = getDimensions();
   var wrapper = select('#chart-wrapper');
   var svg = wrapper.select('svg');
-
+  var bounds = wrapper.select('#bounds');
   // step 4) setup scales
   var chartDataValues = [...chartData.values()];
   var maxChartValue = max(chartDataValues);
@@ -83,31 +85,74 @@ function drawBarChart(data) {
     .range([dimensions.boundedHeight, 0]);
 
   // step 5) draw data
+  var exitTransition = transition().duration(5000);
 
+  var updateTransition = exitTransition.transition().duration(5000);
   var barsGroup = select('.bars');
 
-  var bars = barsGroup
-    .selectAll('.bar')
-    // xAccessor serves as a key function (https://bost.ocks.org/mike/constancy/)
-    .data(chartDataArr, xAccessor)
-    .join(
-      (enter) =>
-        enter
-          .append('rect')
-          .attr('x', xScale(0))
-          .attr('y', (d) => yScale(yAccessor(d)))
-          .attr('width', (d) => xScale(xAccessor(d)))
-          .attr('height', yScale.bandwidth())
-          .attr('class', 'bar')
-          .attr('fill', 'steelblue')
-          .attr('opacity', 0.2),
-      (update) => update,
-      // .call(update => update.transition(t),
-      (exit) => exit.remove()
-      // .call(exit => exit.transition(t)
-    );
+  var newBars = barsGroup.selectAll('.bar').data(chartDataArr, yAccessor);
+
+  function renderBars({
+    selection,
+    data,
+    keyFunction,
+    xScale,
+    yScale,
+    xAccessor,
+    yAccessor,
+    transition,
+    transitionDuration,
+  }) {
+    // rects is the update selection
+    // in d3, the data join is the update selection
+    var rects = selection.selectAll('rect').data(data, keyFunction);
+
+    var newRects = rects
+      .enter()
+      .append('rect')
+      .attr('x', xScale(0))
+      .attr('y', function scaleY(d) {
+        return yScale(yAccessor(d));
+      })
+      .attr('height', yScale.bandwidth())
+      .attr('width', 0)
+      .attr('fill', 'steelblue')
+      .merge(rects) // merge enter selection with the update selection
+      // anything that we want to change with new data updates should be set
+      // after the merge
+      .transition(transition)
+      .duration(transitionDuration)
+      .attr('width', function scaleWidth(d) {
+        return xScale(xAccessor(d));
+      });
+    // .attr('fill', 'red');
+
+    var exitingRects = rects
+      .exit()
+      .transition(transition)
+      .duration(transitionDuration)
+      .attr('width', 0)
+      .remove();
+  }
+  renderBars({
+    selection: barsGroup,
+    data: chartDataArr,
+    keyFunction: yAccessor,
+    xScale: xScale,
+    yScale: yScale,
+    xAccessor: xAccessor,
+    yAccessor: yAccessor,
+    transition: transition(),
+    transitionDuration: 500,
+  });
 
   // step 6) draw peripherals
+  var xAxisGenerator = axisBottom().scale(xScale);
+  var axis = bounds
+    .select('.x-axis')
+    .transition(updateTransition)
+    .call(xAxisGenerator);
+  // step 7) interactions
 
   console.timeEnd('draw chart');
 }
