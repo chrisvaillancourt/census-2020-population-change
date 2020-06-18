@@ -19,10 +19,14 @@ function setUpChartElements() {
     .attr('id', 'bounds')
     .style(
       'transform',
-      `translate(${dimensions.margin.left}px, ${dimensions.margin.right}px)`
+      `translate(${dimensions.margin.left}px, ${dimensions.margin.top}px)`
     );
 
   var barsGroup = bounds.append('g').attr('class', 'bars');
+  var xAxis = bounds
+    .append('g')
+    .attr('class', 'x-axis')
+    .style('transform', `translateY(${dimensions.boundedHeight}px)`);
 }
 
 function drawBarChart(data) {
@@ -60,7 +64,7 @@ function drawBarChart(data) {
     var [, population] = d;
     return population;
   }
-  // create an arrary of key valye pairs for d3 data binding
+  // create an array of key valye pairs for d3 data binding
   var chartDataArr = [...chartData.entries()];
 
   // step 3) draw canvas
@@ -85,9 +89,9 @@ function drawBarChart(data) {
     .range([dimensions.boundedHeight, 0]);
 
   // step 5) draw data
-  var exitTransition = transition().duration(5000);
 
-  var updateTransition = exitTransition.transition().duration(5000);
+  var barsTransition = transition().duration(500);
+
   var barsGroup = select('.bars');
 
   var newBars = barsGroup.selectAll('.bar').data(chartDataArr, yAccessor);
@@ -120,8 +124,7 @@ function drawBarChart(data) {
       .merge(rects) // merge enter selection with the update selection
       // anything that we want to change with new data updates should be set
       // after the merge
-      .transition(transition)
-      .duration(transitionDuration)
+      .transition(barsTransition)
       .attr('width', function scaleWidth(d) {
         return xScale(xAccessor(d));
       });
@@ -142,20 +145,31 @@ function drawBarChart(data) {
     yScale: yScale,
     xAccessor: xAccessor,
     yAccessor: yAccessor,
-    transition: transition(),
-    transitionDuration: 500,
+    transition: barsTransition,
   });
 
   // step 6) draw peripherals
-  var xAxisGenerator = axisBottom().scale(xScale);
-  var axis = bounds
-    .select('.x-axis')
-    .transition(updateTransition)
-    .call(xAxisGenerator);
+
+  function renderBottomAxis({ scale, transition, chartBounds }) {
+    var xAxisGenerator = axisBottom().scale(scale);
+    var xAxis = chartBounds
+      .select('.x-axis')
+      .transition(transition)
+      .call(xAxisGenerator);
+  }
+
+  renderBottomAxis({
+    scale: xScale,
+    transition: barsTransition,
+    chartBounds: bounds,
+    groupClass: 'x-scale',
+  });
+
   // step 7) interactions
 
   console.timeEnd('draw chart');
 }
+
 function sumFields({ fields = [], dataToSummarize = [] } = {}) {
   console.time('summarize fields');
   // Use a map since it can be more performant than a regular object
