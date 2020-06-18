@@ -200,8 +200,8 @@ function getDimensions() {
     width: getElementWidth(wrapper),
     height: getElementHeight(wrapper),
     margin: {
-      top: 30,
-      right: 10,
+      top: 50,
+      right: 50,
       bottom: 50,
       left: 50,
     },
