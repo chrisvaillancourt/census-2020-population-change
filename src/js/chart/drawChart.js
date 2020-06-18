@@ -1,7 +1,7 @@
 import { select } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { extent, max, histogram, mean } from 'd3-array';
-import { axisBottom } from 'd3-axis';
+import { axisBottom, axisLeft } from 'd3-axis';
 import { format } from 'd3-format';
 import { transition } from 'd3-transition';
 
@@ -27,6 +27,10 @@ function setUpChartElements() {
     .append('g')
     .attr('class', 'x-axis')
     .style('transform', `translateY(${dimensions.boundedHeight}px)`);
+  var yAxis = bounds
+    .append('g')
+    .attr('class', 'y-axis')
+    .style('transform', `translateX(${dimensions.margin.left - 100}px)`);
 }
 
 function drawBarChart(data) {
@@ -90,7 +94,7 @@ function drawBarChart(data) {
 
   // step 5) draw data
 
-  var barsTransition = transition().duration(500);
+  var barsTransition = transition().duration(300);
 
   var barsGroup = select('.bars');
 
@@ -150,19 +154,32 @@ function drawBarChart(data) {
 
   // step 6) draw peripherals
 
-  function renderBottomAxis({ scale, transition, chartBounds }) {
-    var xAxisGenerator = axisBottom().scale(scale).tickFormat(format('~s'));
+  function renderXAxis({ scale, transition, chartBounds }) {
+    var xAxisGenerator = axisBottom()
+      .scale(scale)
+      .ticks(5)
+      .tickFormat(format('~s'));
     var xAxis = chartBounds
       .select('.x-axis')
       .transition(transition)
       .call(xAxisGenerator);
   }
 
-  renderBottomAxis({
+  renderXAxis({
     scale: xScale,
     transition: barsTransition,
     chartBounds: bounds,
     groupClass: 'x-scale',
+  });
+
+  function renderYAxis({ scale, chartBounds }) {
+    var yAxisGenerator = axisLeft().scale(scale);
+    var yAxis = chartBounds.select('.y-axis').call(yAxisGenerator);
+  }
+
+  renderYAxis({
+    scale: yScale,
+    chartBounds: bounds,
   });
 
   // step 7) interactions
@@ -203,7 +220,7 @@ function getDimensions() {
       top: 50,
       right: 50,
       bottom: 50,
-      left: 50,
+      left: 100,
     },
   };
   dimensions.boundedWidth =
