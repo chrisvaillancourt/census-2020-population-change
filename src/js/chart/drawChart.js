@@ -1,8 +1,27 @@
 import { select } from 'd3-selection';
-import { scaleLinear, scaleOrdinal } from 'd3-scale';
+import { scaleLinear, scaleBand } from 'd3-scale';
 import { extent, max, histogram, mean } from 'd3-array';
 import { axisBottom } from 'd3-axis';
 import { format } from 'd3-format';
+
+function setUpChartElements() {
+  var wrapper = select('#chart-wrapper');
+
+  var dimensions = getDimensions();
+
+  var svg = wrapper
+    .select('svg')
+    .attr('width', dimensions.width)
+    .attr('height', dimensions.height);
+  var bounds = svg
+    .append('g')
+    .style(
+      'transform',
+      `translate(${dimensions.margin.left}px, ${dimensions.margin.right}px)`
+    );
+
+  var barsGroup = bounds.append('g').attr('class', 'bars');
+}
 
 function drawBarChart(data) {
   console.time('draw chart');
@@ -51,11 +70,71 @@ function drawBarChart(data) {
     fields: summaryFields,
     dataToSummarize: data,
   });
-  console.log(chartData);
 
-  // step 2) Setup dimensions
-  var wrapper = select('.chart-wrapper');
+  function yAccessor(d) {
+    var [popYear] = d;
+    return popYear;
+  }
+  function xAccessor(d) {
+    var [, population] = d;
+    return population;
+  }
+  // create an arrary of key valye pairs for d3 data binding
+  var chartDataArr = [...chartData.entries()];
 
+  // step 3) draw canvas
+  var dimensions = getDimensions();
+  var wrapper = select('#chart-wrapper');
+  var svg = wrapper.select('svg');
+
+  // step 4) setup scales
+  var chartDataValues = [...chartData.values()];
+  var maxChartValue = max(chartDataValues);
+
+  var xScale = scaleLinear()
+    .domain([0, maxChartValue])
+    .range([0, dimensions.boundedWidth])
+    .nice();
+  var dataKeys = [...chartData.keys()];
+
+  // band scales are good for charts with categorical dimensions
+  // in this case, each year is a separate category
+  var yScale = scaleBand()
+    .domain(dataKeys)
+    .range([dimensions.boundedHeight, 0]);
+
+  // step 5) draw data
+
+  var barsGroup = select('.bars');
+
+  var bars = barsGroup
+    .selectAll('.bar')
+    // xAccessor serves as a key function (https://bost.ocks.org/mike/constancy/)
+    .data(chartDataArr, xAccessor)
+    .join(
+      (enter) =>
+        enter
+          .append('rect')
+          .attr('x', xScale(0))
+          .attr('y', (d) => yScale(yAccessor(d)))
+          .attr('width', (d) => xScale(xAccessor(d)))
+          .attr('height', yScale.bandwidth())
+          .attr('class', 'bar')
+          .attr('fill', 'steelblue')
+          .attr('opacity', 0.2),
+      (update) => update,
+      // .call(update => update.transition(t),
+      (exit) => exit.remove()
+      // .call(exit => exit.transition(t)
+    );
+
+  // step 6) draw peripherals
+
+  console.timeEnd('draw chart');
+}
+
+function getDimensions() {
+  var wrapper = select('#chart-wrapper');
   var dimensions = {
     width: getElementWidth(wrapper),
     height: getElementHeight(wrapper),
@@ -70,38 +149,7 @@ function drawBarChart(data) {
     dimensions.width - dimensions.margin.left - dimensions.margin.right;
   dimensions.boundedHeight =
     dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
-
-  // step 3) draw canvas
-  wrapper
-    .append('svg')
-    .attr('width', dimensions.width)
-    .attr('height', dimensions.height);
-  var bounds = wrapper
-    .append('g')
-    .style(
-      'transform',
-      `translate(${dimensions.margin.left}px, ${dimensions.margin.right})`
-    );
-
-  // step 4) setup scales
-  var chartDataValues = [...chartData.values()];
-  var maxChartValue = max(chartDataValues);
-
-  var xScale = scaleLinear()
-    .domain([0, maxChartValue])
-    .range([0, dimensions.boundedWidth])
-    .nice();
-  var dataKeys = [...chartData.keys()];
-
-  // var yScale = scaleOrdinal()
-  //   .domain()
-  //   .range()
-  //   .nice();
-  // step 5) draw data
-
-  // step 6) draw peripherals
-
-  console.timeEnd('draw chart');
+  return dimensions;
 }
 
 function getElementWidth(d3Selection) {
@@ -111,4 +159,4 @@ function getElementHeight(d3Selection) {
   return parseInt(d3Selection.style('height'), 10);
 }
 
-export { drawBarChart };
+export { setUpChartElements, drawBarChart };

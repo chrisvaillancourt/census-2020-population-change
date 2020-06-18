@@ -15,12 +15,13 @@ body,
   width: 100%;
 }
 
-.chart {
+#chart {
+  display: none;
   width: 50vw;
   height: 30vh;
   background-color: #1a1a1a;
 }
-.chart-wrapper {
+#chart-wrapper {
   height: 100%;
   width: 100%;
 }

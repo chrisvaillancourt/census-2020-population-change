@@ -11,7 +11,7 @@ import LayerList from 'esri/widgets/LayerList';
 import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
 import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
-import { drawBarChart } from './js/chart/drawChart';
+import { setUpChartElements, drawBarChart } from './js/chart/drawChart';
 async function createMap() {
   var map = new esriMap({
     basemap,
@@ -64,10 +64,10 @@ async function createMap() {
   countyPolygonLayer.visible = false;
   map.addMany([countyCentroidLayer, countyPolygonLayer]);
 
-  var chartDiv = createDiv({
-    classname: 'chart',
-  });
+  var chartDiv = document.querySelector('#chart');
+  chartDiv.style.display = 'initial';
   view.ui.add(chartDiv, 'bottom-left');
+  setUpChartElements();
   view.ui.add([homeBtn], 'bottom-right');
   view.ui.add([legendExpand, layerList], 'top-right');
 
@@ -82,14 +82,6 @@ async function createMap() {
     var results = await countyCentroidLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
     drawBarChart(attributes);
-  }
-  function createDiv({ classname = '' }) {
-    var div = document.createElement('div');
-    div.classList.add(classname);
-    var wrapper = document.createElement('div');
-    wrapper.classList.add('chart-wrapper');
-    div.append(wrapper);
-    return div;
   }
 }
 console.time('map');
