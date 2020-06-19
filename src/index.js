@@ -116,7 +116,7 @@ async function createMap() {
       }
       return [yearAlias, val];
     });
-
+    chartData.reverse();
     drawBarChart(chartData);
   }
 }
