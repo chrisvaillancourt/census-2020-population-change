@@ -4,6 +4,7 @@ import { extent, max, histogram, mean } from 'd3-array';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { format } from 'd3-format';
 import { transition } from 'd3-transition';
+import { summarizeFields } from '../utils/dataManipulation';
 
 function setUpChartElements() {
   var wrapper = select('#chart-wrapper');
@@ -55,7 +56,7 @@ function drawBarChart(data) {
     'TOTPOP_CY',
   ];
 
-  var chartData = sumFields({
+  var chartData = summarizeFields({
     fields: summaryFields,
     dataToSummarize: data,
   });
@@ -69,7 +70,27 @@ function drawBarChart(data) {
     return population;
   }
   // create an array of key valye pairs for d3 data binding
-  var chartDataArr = [...chartData.entries()];
+  // update the name of the data aliases
+  var numberRegex = /\d+/;
+  var chartDataArr = [...chartData.entries()].map(function changeAlias(subArr) {
+    var [year, val] = subArr;
+    var yearAlias;
+    if (year == 'TOTPOP_CY') {
+      yearAlias = '2020';
+    } else {
+      var yearNumber = year.match(numberRegex);
+      yearAlias = '20'.concat(String(yearNumber));
+    }
+    return [yearAlias, val];
+  });
+
+  // var chartDataArr = [...chartData.entries()];
+  var years = chartDataArr.map(function (subArr) {
+    var [year] = subArr;
+    return year;
+  });
+  // chartDataArr.push()
+  // console.log(chartDataArr);
 
   // step 3) draw canvas
   var dimensions = getDimensions();
@@ -84,13 +105,10 @@ function drawBarChart(data) {
     .domain([0, maxChartValue])
     .range([0, dimensions.boundedWidth])
     .nice();
-  var dataKeys = [...chartData.keys()];
 
   // band scales are good for charts with categorical dimensions
   // in this case, each year is a separate category
-  var yScale = scaleBand()
-    .domain(dataKeys)
-    .range([dimensions.boundedHeight, 0]);
+  var yScale = scaleBand().domain(years).range([dimensions.boundedHeight, 0]);
 
   // step 5) draw data
 
@@ -185,30 +203,6 @@ function drawBarChart(data) {
   // step 7) interactions
 
   console.timeEnd('draw chart');
-}
-
-function sumFields({ fields = [], dataToSummarize = [] } = {}) {
-  console.time('summarize fields');
-  // Use a map since it can be more performant than a regular object
-  var summaryDataStore = new Map();
-
-  // set a key for each field we want to summarize
-  fields.forEach(function setStoreKeys(fieldName) {
-    summaryDataStore.set(fieldName, 0);
-  });
-
-  // summarize data with addition
-  dataToSummarize.reduce(function (summaryStore, currentObj) {
-    for (let [key, value] of Object.entries(currentObj)) {
-      if (summaryStore.has(key)) {
-        var newSummaryValue = summaryStore.get(key) + value;
-        summaryStore.set(key, newSummaryValue);
-      }
-    }
-    return summaryStore;
-  }, summaryDataStore);
-  console.timeEnd('summarize fields');
-  return summaryDataStore;
 }
 
 function getDimensions() {
