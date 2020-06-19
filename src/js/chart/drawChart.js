@@ -4,7 +4,6 @@ import { extent, max, histogram, mean } from 'd3-array';
 import { axisBottom, axisLeft } from 'd3-axis';
 import { format } from 'd3-format';
 import { transition } from 'd3-transition';
-import { summarizeFields } from '../utils/dataManipulation';
 
 function setUpChartElements() {
   var wrapper = select('#chart-wrapper');
@@ -36,30 +35,9 @@ function setUpChartElements() {
 
 function drawBarChart(data) {
   console.time('draw chart');
-  // console.table(data[0]);
+
   // step 1) access data
   data = [...data];
-  // var testData = data.slice(0, 10);
-  // console.log(testData);
-  // TODO break data summing into separate function
-  var summaryFields = [
-    'TSPOP10_CY',
-    'TSPOP11_CY',
-    'TSPOP12_CY',
-    'TSPOP13_CY',
-    'TSPOP14_CY',
-    'TSPOP15_CY',
-    'TSPOP16_CY',
-    'TSPOP17_CY',
-    'TSPOP18_CY',
-    'TSPOP19_CY',
-    'TOTPOP_CY',
-  ];
-
-  var chartData = summarizeFields({
-    fields: summaryFields,
-    dataToSummarize: data,
-  });
 
   function yAccessor(d) {
     var [popYear] = d;
@@ -69,23 +47,8 @@ function drawBarChart(data) {
     var [, population] = d;
     return population;
   }
-  // create an array of key valye pairs for d3 data binding
-  // update the name of the data aliases
-  var numberRegex = /\d+/;
-  var chartDataArr = [...chartData.entries()].map(function changeAlias(subArr) {
-    var [year, val] = subArr;
-    var yearAlias;
-    if (year == 'TOTPOP_CY') {
-      yearAlias = '2020';
-    } else {
-      var yearNumber = year.match(numberRegex);
-      yearAlias = '20'.concat(String(yearNumber));
-    }
-    return [yearAlias, val];
-  });
 
-  // var chartDataArr = [...chartData.entries()];
-  var years = chartDataArr.map(function (subArr) {
+  var years = data.map(function (subArr) {
     var [year] = subArr;
     return year;
   });
@@ -98,7 +61,10 @@ function drawBarChart(data) {
   var svg = wrapper.select('svg');
   var bounds = wrapper.select('#bounds');
   // step 4) setup scales
-  var chartDataValues = [...chartData.values()];
+  var chartDataValues = data.map(function getPopValues(subArr) {
+    var [, populationVal] = subArr;
+    return populationVal;
+  });
   var maxChartValue = max(chartDataValues);
 
   var xScale = scaleLinear()
@@ -116,7 +82,7 @@ function drawBarChart(data) {
 
   var barsGroup = select('.bars');
 
-  var newBars = barsGroup.selectAll('.bar').data(chartDataArr, yAccessor);
+  var newBars = barsGroup.selectAll('.bar').data(data, yAccessor);
 
   function renderBars({
     selection,
@@ -161,7 +127,7 @@ function drawBarChart(data) {
   }
   renderBars({
     selection: barsGroup,
-    data: chartDataArr,
+    data: data,
     keyFunction: yAccessor,
     xScale: xScale,
     yScale: yScale,

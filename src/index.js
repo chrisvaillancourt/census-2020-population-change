@@ -12,6 +12,8 @@ import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
 import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
 import { setUpChartElements, drawBarChart } from './js/chart/drawChart';
+import { summarizeFields } from './js/utils/dataManipulation';
+
 async function createMap() {
   var map = new esriMap({
     basemap,
@@ -81,7 +83,41 @@ async function createMap() {
   async function queryLayerView() {
     var results = await countyCentroidLayerView.queryFeatures();
     var attributes = results.features.map((feature) => feature.attributes);
-    drawBarChart(attributes);
+
+    var summaryFields = [
+      'TSPOP10_CY',
+      'TSPOP11_CY',
+      'TSPOP12_CY',
+      'TSPOP13_CY',
+      'TSPOP14_CY',
+      'TSPOP15_CY',
+      'TSPOP16_CY',
+      'TSPOP17_CY',
+      'TSPOP18_CY',
+      'TSPOP19_CY',
+      'TOTPOP_CY',
+    ];
+
+    var summaryData = summarizeFields({
+      fields: summaryFields,
+      dataToSummarize: attributes,
+    });
+    var numberRegex = /\d+/;
+    var chartData = [...summaryData.entries()].map(function changeAlias(
+      subArr
+    ) {
+      var [year, val] = subArr;
+      var yearAlias;
+      if (year == 'TOTPOP_CY') {
+        yearAlias = '2020';
+      } else {
+        var yearNumber = year.match(numberRegex);
+        yearAlias = '20'.concat(String(yearNumber));
+      }
+      return [yearAlias, val];
+    });
+
+    drawBarChart(chartData);
   }
 }
 console.time('map');
