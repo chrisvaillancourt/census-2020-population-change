@@ -5,21 +5,13 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { format } from 'd3-format';
 import { transition } from 'd3-transition';
 import { getDimensions } from '../utils/domSetup';
+import { yAccessor, xAccessor } from '../utils/chartSetup';
 
 function drawBarChart(data) {
   console.time('draw chart');
 
   // step 1) access data
   data = [...data];
-
-  function yAccessor(d) {
-    var [popYear] = d;
-    return popYear;
-  }
-  function xAccessor(d) {
-    var [, population] = d;
-    return population;
-  }
 
   var years = data.map(function (subArr) {
     var [year] = subArr;
