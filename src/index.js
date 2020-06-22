@@ -12,7 +12,9 @@ import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
 import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
 import { drawBarChart } from './js/chart/barChart';
+import { renderLineChart } from './js/chart/lineChart.js';
 import { setUpChartElements } from './js/utils/domSetup.js';
+import { getDimensions } from './js/utils/domSetup.js';
 import { summarizeFields } from './js/utils/dataManipulation';
 
 async function createMap() {
@@ -118,7 +120,12 @@ async function createMap() {
       return [yearAlias, val];
     });
     chartData.reverse();
-    drawBarChart(chartData);
+    // drawBarChart(chartData);
+    var chartDimensions = getDimensions();
+    renderLineChart({
+      data: attributes,
+      dimensions: chartDimensions,
+    });
   }
 }
 console.time('map');
