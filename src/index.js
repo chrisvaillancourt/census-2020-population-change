@@ -11,7 +11,8 @@ import LayerList from 'esri/widgets/LayerList';
 import { basemap } from './js/basemap';
 import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
 import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
-import { setUpChartElements, drawBarChart } from './js/chart/drawChart';
+import { drawBarChart } from './js/chart/barChart';
+import { setUpChartElements } from './js/utils/domSetup.js';
 import { summarizeFields } from './js/utils/dataManipulation';
 
 async function createMap() {
