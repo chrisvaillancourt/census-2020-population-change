@@ -45,7 +45,7 @@ function drawBarChart(data) {
 
   var barsTransition = transition().duration(300);
 
-  var barsGroup = select('.bars');
+  var barsGroup = select('.primary-vis');
 
   var newBars = barsGroup.selectAll('.bar').data(data, yAccessor);
 
