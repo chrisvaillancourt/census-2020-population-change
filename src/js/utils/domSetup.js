@@ -17,7 +17,7 @@ function setUpChartElements() {
       `translate(${dimensions.margin.left}px, ${dimensions.margin.top}px)`
     );
 
-  var barsGroup = bounds.append('g').attr('class', 'bars');
+  var primaryVisElements = bounds.append('g').attr('class', 'primary-vis');
   var xAxis = bounds
     .append('g')
     .attr('class', 'x-axis')
