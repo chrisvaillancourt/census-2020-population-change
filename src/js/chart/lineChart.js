@@ -102,7 +102,7 @@ function renderLineChart({ data, dimensions }) {
       return lineGenerator(d.values);
     })
     .style('stroke', 'white')
-    .style('opacity', 0.05);
+    .style('opacity', 0.2);
 
   // draw peripherals
 
