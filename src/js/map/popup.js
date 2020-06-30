@@ -1,3 +1,6 @@
+import MediaContent from 'esri/popup/content/MediaContent';
+import ChartMediaInfoValue from 'esri/popup/content/support/ChartMediaInfoValue';
+import LineChartMediaInfo from 'esri/popup/content/LineChartMediaInfo';
 import { symbolColors } from './renderers.js';
 
 var popupTemplate = {
@@ -33,7 +36,7 @@ function getPopupContent(feature) {
     graphic: { attributes },
   } = feature;
 
-  var { pop_growth } = attributes;
+  var { pop_growth, pop_change } = attributes;
 
   const spanStyle = `
   font-weight: bold;
@@ -46,17 +49,57 @@ function getPopupContent(feature) {
   })};
   font-size: larger;
   `;
+  const popChangeQualifier = getTextQualifier({
+    num: pop_change,
+    breakpoint: 0,
+    aboveBreakpointValue: 'increased',
+    belowBreakpointValue: 'decreased',
+    defaultValue: 'changed',
+  });
+
+  var lineChartValue = new ChartMediaInfoValue({
+    fields: [
+      'TSPOP10_CY',
+      'TSPOP11_CY',
+      'TSPOP12_CY',
+      'TSPOP13_CY',
+      'TSPOP14_CY',
+      'TSPOP15_CY',
+      'TSPOP16_CY',
+      'TSPOP17_CY',
+      'TSPOP18_CY',
+      'TSPOP19_CY',
+      'TOTPOP_CY',
+    ],
+    normalizeField: null,
+    tooltipField: '',
+  });
+  var lineChart = new LineChartMediaInfo({
+    title: 'Population 2010 - 2020',
+    value: lineChartValue,
+  });
+  var mediaElement = new MediaContent({
+    mediaInfos: [lineChart],
+  });
 
   return [
     {
       type: 'text',
-      text: `From 2010 - 2020, this area's population grew/shrank by <span style="${spanStyle}">{pop_growth}%</span> per year. The average growth rate for the entire U.S. is 0.76% per year.
+      text: `
+      <p>
+        Between 2010 - 2020, this area's population ${popChangeQualifier} by <span style="${spanStyle}">{pop_growth}%</span> per year.
+      </p>
+      <p>
+        The U.S. growth rate during this time was 0.76% per year.
+      </p>
+      
         <ul>
           <li>2010 Population: {TSPOP10_CY}</li>
           <li>2020 Population: {TOTPOP_CY}</li>
         </ul>
         `,
     },
+    mediaElement,
   ];
 }
 
