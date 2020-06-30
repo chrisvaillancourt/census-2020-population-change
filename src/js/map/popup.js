@@ -2,30 +2,71 @@ var popupTemplate = {
   title: '{NAME}, {st_name}',
   outFields: ['*'],
   content: getPopupContent,
+  fieldInfos: [
+    {
+      fieldName: 'pop_growth',
+      format: {
+        places: 2,
+      },
+    },
+    {
+      fieldName: 'TSPOP10_CY',
+      format: {
+        places: 0,
+        digitSeparator: true,
+      },
+    },
+    {
+      fieldName: 'TOTPOP_CY',
+      format: {
+        places: 0,
+        digitSeparator: true,
+      },
+    },
+  ],
 };
 
 function getPopupContent(feature) {
   var {
     graphic: { attributes },
   } = feature;
-  console.log(attributes);
+
   var { pop_growth } = attributes;
+
+  const spanStyle = `
+  font-weight: bold;
+  color: ${getTextQualifier({
+    num: pop_growth,
+    breakpoint: 0.76,
+    aboveBreakpointValue: '#0795d1',
+    belowBreakpointValue: '#a9a9a9',
+    defaultValue: '#ffffff',
+  })};
+  font-size: larger;
+  `;
+
   return [
     {
       type: 'text',
-      text: `Between 2010 - 2020, the annual compound growth rate for this area was <span style="color: ${getFormattedColor(
-        { num: pop_growth, breakpoint: 0.76 }
-      )}">{pop_growth}%</span> the population of this area changed by {pop_change} people. The growth rate for the U.S. was 0.76% per year.`,
+      text: `From 2010 - 2020, this area's population grew/shrank by <span style="${spanStyle}">{pop_growth}%</span> per year. The average growth rate for the entire U.S. is 0.76% per year.
+        <ul>
+          <li>2010 Population: {TSPOP10_CY}</li>
+          <li>2020 Population: {TOTPOP_CY}</li>
+        </ul>
+        `,
     },
   ];
 }
 
-function getFormattedColor({ num, breakpoint }) {
-  const aboveAvgColor = '#0795d1';
-  const belowAvgColor = '#a9a9a9';
-  const tieColor = '#ffffff';
-  if (num > breakpoint) return aboveAvgColor;
-  else if (num < breakpoint) return belowAvgColor;
-  else return tieColor;
+function getTextQualifier({
+  num,
+  breakpoint,
+  aboveBreakpointValue,
+  belowBreakpointValue,
+  defaultValue,
+}) {
+  if (num > breakpoint) return aboveBreakpointValue;
+  else if (num < breakpoint) return belowBreakpointValue;
+  else return defaultValue;
 }
 export { popupTemplate };
