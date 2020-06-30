@@ -7,7 +7,9 @@ import { transition } from 'd3-transition';
 import { getDimensions } from '../utils/domSetup';
 import { yAccessor, xAccessor } from '../utils/chartSetup';
 
-function drawBarChart(data) {
+function drawBarChart({ data = [], chartDimensions = {} } = {}) {
+  if (data.length == 0)
+    return console.error('data and chartDimensions are required');
   console.time('draw chart');
 
   // step 1) access data
