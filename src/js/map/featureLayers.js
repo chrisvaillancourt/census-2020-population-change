@@ -1,13 +1,11 @@
 import FeatureLayer from 'esri/layers/FeatureLayer';
 import GeoJSONLayer from 'esri/layers/GeoJSONLayer';
 import { json } from 'd3-fetch';
-import { popupTemplate } from './popup';
 
 var countyLayer = new FeatureLayer({
   url:
     'https://services7.arcgis.com/Fnhc04BJL93uqCjd/ArcGIS/rest/services/counties_2020_population/FeatureServer/1',
   outFields: ['*'],
-  popupTemplate,
 });
 
 async function createEsriGeoJson(geoJson) {
@@ -18,7 +16,6 @@ async function createEsriGeoJson(geoJson) {
   var geoJsonLayer = new GeoJSONLayer({
     url,
     outFields: ['*'],
-    popupTemplate,
   });
   return geoJsonLayer;
 }
