@@ -10,10 +10,8 @@ import watchUtils from 'esri/core/watchUtils';
 import LayerList from 'esri/widgets/LayerList';
 import { basemap } from './js/map/basemap';
 import { countyGeoJsonCentroid, countyGeoJson } from './js/map/featureLayers';
-import {
-  colorAndSizeBlueAndGray3,
-  colorBlueAndGray3,
-} from './js/map/renderers';
+import { colorAndSizeRenderer, colorRenderer } from './js/map/renderers';
+import { popupTemplate } from './js/map/popup';
 import { drawBarChart } from './js/chart/barChart';
 import { renderLineChart } from './js/chart/lineChart.js';
 import { setUpChartElements } from './js/utils/domSetup.js';
@@ -64,12 +62,16 @@ async function createMap() {
     countyGeoJson,
     countyGeoJsonCentroid,
   ]);
-
-  countyCentroidLayer.renderer = colorAndSizeBlueAndGray3;
+  // set renderer, title, and popup on layers
+  countyCentroidLayer.renderer = colorAndSizeRenderer;
   countyCentroidLayer.title = 'US County';
-  countyPolygonLayer.renderer = colorBlueAndGray3;
+  countyCentroidLayer.popupTemplate = popupTemplate;
+
+  countyPolygonLayer.renderer = colorRenderer;
   countyPolygonLayer.title = 'US County (Polygon)';
   countyPolygonLayer.visible = false;
+  countyPolygonLayer.popupTemplate = popupTemplate;
+
   map.addMany([countyCentroidLayer, countyPolygonLayer]);
 
   var chartDiv = document.querySelector('#chart');
@@ -77,7 +79,7 @@ async function createMap() {
   view.ui.add(chartDiv, 'bottom-left');
   setUpChartElements();
   view.ui.add([homeBtn], 'bottom-right');
-  view.ui.add([legendExpand, layerList], 'top-right');
+  view.ui.add([layerList, legendExpand], 'top-right');
 
   var countyCentroidLayerView = await view.whenLayerView(countyCentroidLayer);
   watchUtils.whenFalseOnce(countyCentroidLayerView, 'updating', endTimer);
