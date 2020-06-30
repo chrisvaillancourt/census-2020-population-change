@@ -1,3 +1,5 @@
+import { symbolColors } from './renderers.js';
+
 var popupTemplate = {
   title: '{NAME}, {st_name}',
   outFields: ['*'],
@@ -38,9 +40,9 @@ function getPopupContent(feature) {
   color: ${getTextQualifier({
     num: pop_growth,
     breakpoint: 0.76,
-    aboveBreakpointValue: '#0795d1',
-    belowBreakpointValue: '#a9a9a9',
-    defaultValue: '#ffffff',
+    aboveBreakpointValue: symbolColors.high,
+    belowBreakpointValue: symbolColors.low,
+    defaultValue: symbolColors.medium,
   })};
   font-size: larger;
   `;
