@@ -8,9 +8,12 @@ import Home from 'esri/widgets/Home';
 import Expand from 'esri/widgets/Expand';
 import watchUtils from 'esri/core/watchUtils';
 import LayerList from 'esri/widgets/LayerList';
-import { basemap } from './js/basemap';
-import { countyGeoJsonCentroid, countyGeoJson } from './js/featureLayers';
-import { colorAndSizeBlueAndGray3, colorBlueAndGray3 } from './js/renderers';
+import { basemap } from './js/map/basemap';
+import { countyGeoJsonCentroid, countyGeoJson } from './js/map/featureLayers';
+import {
+  colorAndSizeBlueAndGray3,
+  colorBlueAndGray3,
+} from './js/map/renderers';
 import { drawBarChart } from './js/chart/barChart';
 import { renderLineChart } from './js/chart/lineChart.js';
 import { setUpChartElements } from './js/utils/domSetup.js';
@@ -120,12 +123,13 @@ async function createMap() {
       return [yearAlias, val];
     });
     chartData.reverse();
-    // drawBarChart(chartData);
     var chartDimensions = getDimensions();
-    renderLineChart({
-      data: attributes,
-      dimensions: chartDimensions,
-    });
+    drawBarChart({ data: chartData, chartDimensions });
+
+    // renderLineChart({
+    //   data: attributes,
+    //   dimensions: chartDimensions,
+    // });
   }
 }
 console.time('map');
